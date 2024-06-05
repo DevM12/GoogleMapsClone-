@@ -1,5 +1,9 @@
 
+import 'leaflet/dist/leaflet.css';
 import type { Place } from "../api/Place"
+import { Map as LeafletMap } from 'leaflet';
+import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 
 interface MapProps {
     place: Place | null;
@@ -10,10 +14,22 @@ interface MapProps {
 
 export default function Map({ place }: MapProps) {
 
-
+    const mapRef = useRef<LeafletMap | null>(null);
+useEffect(()=>{
+    if(mapRef.current&&place){
+        mapRef.current.flyTo([place.latitute,place.longitute])
+    }
+})
     return (
-        <div>
-            Map
-        </div>
+        <MapContainer
+            ref={mapRef}
+            center={[40.7, -74]}
+            zoom={12}
+            scrollWheelZoom
+            className="h-full"
+        >
+            <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+            {place && <Marker position={[place.latitute, place.longitute]} />}
+        </MapContainer>
     )
 }
